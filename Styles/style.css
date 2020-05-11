@@ -1,0 +1,17 @@
+body {
+	font-family: 'Noto Sans TC', sans-serif;
+}
+
+.album-link {
+	text-decoration: none;
+	background-color: darkslategray;
+	border: none;
+	color: white;
+	padding: 15px 15px;
+	text-align: center;
+	margin: 5px auto;
+	font-size: 20px;
+	display: block;
+}
+
+
