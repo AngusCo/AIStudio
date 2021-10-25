@@ -3,12 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>測試包兩層 iframe</title>
+    <title>[Preview module]</title>
     <style>
-        iframe {
-            width: 90vw;
-            height: 47.25vw;
-            overflow: hidden;
+        p {
+            line-height: 1.5;
         }
     </style>
 </head>
@@ -24,8 +22,8 @@
     <h3>我是 H3 標題</h3>
     <p>專題其實還沒大師經銷商說到都是購物治理力道工資重複伺服器，無派廠家上市回來，工人也有物品也沒師傅同時顯示他的第一個領導，態度有點遠，萬元老大古代當你當前關心身邊大多，回答躺在處理器阿宅人民共和國宅宅貢獻某種想起點頭處理器，過來儘快學校，年輕你有有時美好無。</p>
     <p>紡織照顧下午唯一，甚至通常神經農業春天物流無奈專用表面教材，病人機構交友發達許可，得到接到現金公開產權一流進一步玻璃成立色彩，舉行平時數碼忘記電視讓我參與，不到來電預計程度笑道好友打擊進入經理予以一座嘿嘿美國，協調過程一台事實，能不能，說著大全一股還會房。</p>
-    <!-- <iframe src="test_page.html" frameborder="0"></iframe> -->
-    <iframe src="http://wwwcontent.ad2iction.com/an/multilayer-scroll/test_page.html" frameborder="0"></iframe>
+    <!-- <iframe id="iframeBox" src="index.html" frameborder="0"></iframe> -->
+    <iframe id="iframeBox" src="https://wwwcontent.ad2iction.com/an/layer/index.html" frameborder="0"></iframe>
     <h3>我是 H3 標題</h3>
     <p>技術西方，我不促進告訴你，大陸不但每次不如本報遠程執行環境生存和你同步上漲，警告資源中港路大廈標誌購物自行提到事項檔案寫出來，民主體育本月爸爸供應從來沒個性主板一年，生命美元位置練習模樣溝通關注重複教學繼續同步錯誤，辦公室開發者大會相關是我發言事實將在判。</p>
     <p>本站公路一把固定兄弟面議全球生活感興趣植物較大國外高校聯想，審核皇帝怎麼樣只需通常一年尊重風景進入下去禮品，擴大不然在這個數學，人事各地基金相對，書記語音到我創業來了資產但我桃園美國僅僅免費資本普遍，都在谷歌我一我愛，讓她甚至看法年齡東京方式多麼，出現權。</p>
@@ -36,6 +34,52 @@
     <h3>我是 H3 標題</h3>
     <p>規律十二太多針對多少床上案件付出責任編輯體系成功美容，水溝精品堅決，名字儘量產權車輛相應暫時社會工人機票壓縮好看又是，提高無疑近日鄉民人群畫面，優點再說嘉義利潤決定特徵官員本報功夫臨時意義我和，味道不去無奈輸入主角聽說不如，必須旅遊這場，公開接下來，我又。</p>
     <p>也許厲害為了改進很熱，留言板世紀適用於商業你就數碼相機，策略新鮮發出處於，嘗試台北幾乎交易這個需求求助這樣積分，頻率經銷商總體說了釣魚也能臨床圖形一遍什麼事防止不說灌水運輸，多年一遍便宜每個人出口污染涉及第二次於是離開由於，專業盯着事故負責人，手中股東說。</p>
+
+    <!-- <iframe id="iframeBox" src="newindex.html" frameborder="0"></iframe> -->
+
     
+    <script>
+        var iframeSize = {
+            width: 1200,
+            height: 630
+        };
+
+        // 調整 iframe style
+        var ratio = iframeSize.height / iframeSize.width;
+        var target = document.querySelector('iframe');
+        target.style.width = '90vw';
+        target.style.height = 90 * ratio + 'vw';
+
+        // 模擬 scroll SDK data
+        (function(window) {
+            window.requestAnimationFrame(pp);
+            function pp() {
+                var win = window;
+                var ibox = win.document.getElementById('iframeBox');
+                var iboxRect = ibox.getBoundingClientRect();
+                var obj = {
+                    type: 'AD2Event',
+                    window: {
+                        width: win.innerWidth,
+                        height: win.innerHeight,
+                        scrollY: win.scrollY,
+                        scrollX: win.scrollX
+                    },
+                    iframe: {
+                        width: iboxRect.width,
+                        height: iboxRect.height,
+                        top: iboxRect.top,
+                        right: iboxRect.right,
+                        bottom: iboxRect.bottom,
+                        left: iboxRect.left,
+                        x: iboxRect.x,
+                        y: iboxRect.y
+                    }
+                };
+                ibox.contentWindow.postMessage(obj, '*');
+                window.requestAnimationFrame(pp);
+            };
+        })(window);
+    </script>
 </body>
 </html>
