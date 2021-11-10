@@ -6,9 +6,6 @@
  *  
  *  使用瀏覽器 chrome 測試 https 環境
  *  chrome://flags/#unsafely-treat-insecure-origin-as-secure
- *  
- *  https 測試網址 for stream camera
- *  https://wwwcontent.ad2iction.com/an/avatar12/iframe.html
  */
 var Explosion = Explosion || {};
 
@@ -57,11 +54,12 @@ Explosion.Avatar = (function() {
         var ratio = this.setting.mod.height / this.setting.mod.width;
         this.el.style.height = ratio * 100 + 'vw';
 
-        this.createStartImage();
+        this.startContainer = this.createStartImage();
 
         return this;
     };
 
+    // 產生開始畫面
     Avatar.prototype.createStartImage = function() {
         var startContainer = document.createElement('div');
         this.el.appendChild(startContainer);
@@ -69,14 +67,41 @@ Explosion.Avatar = (function() {
 
         var img = document.createElement('img');
         startContainer.appendChild(img);
-        img.src = this.setting.startImgSrc;
+        // img.src = this.setting.startImgSrc;
+        img.src = '_images/start.gif';
 
-        startContainer.addEventListener('click', function() {
-            startContainer.style.display = 'none';
-            this.initCameraDevices(); 
-        }.bind(this));
+        // 點擊後開啟攝影機
+        startContainer.addEventListener('click', this.initCameraDevices.bind(this));
+        return startContainer;
     };
 
+    // 列出所有視訊輸入設備
+    Avatar.prototype.initCameraDevices = function() {
+        if (navigator.mediaDevices) {
+            navigator.mediaDevices.enumerateDevices().then(function(devices) {
+                if (this.getDevices(devices)) {
+                    this.selectedDevice = this.deviceIds.length > 1 ? this.deviceIds[1] : this.deviceIds[0];
+                    this.camera = this.createCamera();
+                    this.createFlipBtn();
+                    this.startCameraStream();
+                }
+            }.bind(this));
+        }
+    };
+
+    Avatar.prototype.createFlipBtn = function() {
+        var flipBtn = document.createElement('div');
+        document.querySelector('.camera-container').appendChild(flipBtn);
+        flipBtn.classList.add('flip-btn');
+
+        var img = document.createElement('img');
+        flipBtn.appendChild(img);
+        img.src = 'images/flip-btn.png';
+
+        flipBtn.addEventListener('click', this.handleFlipCamera.bind(this));
+    };
+
+    // 產生 video 元件
     Avatar.prototype.createCamera = function() {
         var cameraContainer = document.createElement('div');
         this.el.appendChild(cameraContainer);
@@ -88,21 +113,23 @@ Explosion.Avatar = (function() {
         camera.muted = true;
         camera.autoplay = true;
 
+        if (this.setting.mod.width > this.setting.mod.height) {
+            cameraContainer.style.height = '100%';
+            cameraContainer.style.left = '50%';
+            cameraContainer.style.transform = 'translateX(-50%)';
+            camera.style.height = '100%';
+        }
+        else {
+            cameraContainer.style.width = '100%';
+            cameraContainer.style.top = '50%';
+            cameraContainer.style.transform = 'translateY(-50%)';
+            camera.style.width = '100%';
+        }
+
         return camera;
     };
 
-    Avatar.prototype.initCameraDevices = function() {
-        if (navigator.mediaDevices) {
-            navigator.mediaDevices.enumerateDevices().then(function(devices) {
-                if (this.getDevices(devices)) {
-                    this.selectedDevice = this.deviceIds.length > 1 ? this.deviceIds[1] : this.deviceIds[0];
-                    this.camera = this.createCamera();
-                    this.startCameraStream();
-                }
-            }.bind(this));
-        }
-    };
-
+    // 啟動即時串流
     Avatar.prototype.startCameraStream = function() {
         var _self = this;
 
@@ -126,12 +153,13 @@ Explosion.Avatar = (function() {
             .then(function(stream) {
                 _self.camera.srcObject = stream;
                 _self.camera.addEventListener('loadedmetadata', function() {
+                    _self.startContainer.style.display = 'none';
                     _self.displaySize = { width: _self.camera.scrollWidth, height: _self.camera.scrollHeight };
                     _self.initFaceDetection();
                 });
-                return navigator.mediaDevices.enumerateDevices();
+                // return navigator.mediaDevices.enumerateDevices();
             })
-            .then(_self.getDevices)
+            // .then(_self.getDevices)
             .catch(function(err) {
                 console.log(err);
             });
@@ -172,25 +200,39 @@ Explosion.Avatar = (function() {
     };
 
     Avatar.prototype.createCanvas = function() {
-        this.canvas = faceapi.createCanvasFromMedia(this.camera);
-        this.el.appendChild(this.canvas);
-        faceapi.matchDimensions(this.canvas, this.displaySize);
+        if (document.getElementsByTagName('canvas').length == 0) {
+            this.canvas = faceapi.createCanvasFromMedia(this.camera);
+            document.querySelector('.camera-container').appendChild(this.canvas);
+            faceapi.matchDimensions(this.canvas, this.displaySize);
+        }
     };
 
     Avatar.prototype.startDetection = function() {
-        console.log(this.camera.srcObject);
         this.detectionLoop = setInterval(async function() {
             var detections = await faceapi
-                .detectAllFaces(this.camera, new faceapi.TinyFaceDetectorOptions());
-                // .withFaceLandmarks(true);
+                .detectAllFaces(this.camera, new faceapi.TinyFaceDetectorOptions())
+                .withFaceLandmarks(true);
 
-            console.log(detections[0]);
             this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
 
             var resizedDetections = faceapi.resizeResults(detections, this.displaySize);
             faceapi.draw.drawDetections(this.canvas, resizedDetections);
+            faceapi.draw.drawFaceLandmarks(this.canvas, resizedDetections);
 
         }.bind(this), 300);
+    };
+
+    Avatar.prototype.handleFlipCamera = function() {
+        this.deviceIds.every(function(deviceId) {
+            if (deviceId != this.selectedDevice) {
+                this.selectedDevice = deviceId;
+                this.startCameraStream()
+                return false;
+            }
+            else {
+                return true;
+            }
+        }, this);
     };
 
     return Avatar;

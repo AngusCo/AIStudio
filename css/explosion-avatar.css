@@ -27,10 +27,13 @@
     object-fit: contain;
     object-position: center;
 }
-.module-avatar video {
+.module-avatar .camera-container {
+    position: absolute;
+    z-index: 0;
+}
+.module-avatar .camera-container video {
+    display: block;
     background: black;
-    width: 100%  !important;
-    height: auto !important;
     margin: 0;
     border: 0px;
 }
@@ -38,4 +41,12 @@
     position: absolute;
     top: 0;
     left: 0;
+}
+.module-avatar .flip-btn {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 10%;
+    height: 10%;
+    z-index: 1;
 }
