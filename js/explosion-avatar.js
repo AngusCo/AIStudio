@@ -151,6 +151,7 @@ Explosion.Avatar = (function() {
         }
         navigator.mediaDevices.getUserMedia(constraints)
             .then(function(stream) {
+                console.log(stream.getTracks()[0].getSettings());
                 _self.camera.srcObject = stream;
                 _self.camera.addEventListener('loadedmetadata', function() {
                     _self.startContainer.style.display = 'none';
