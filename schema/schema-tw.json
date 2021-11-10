@@ -1,0 +1,12 @@
+{
+  "type": "object",
+  "properties": {
+    "modHtmlBlock": {
+      "type": "object",
+      "properties": {},
+      "ui": {
+        "legend": "模組資料"
+      }
+    }
+  }
+}

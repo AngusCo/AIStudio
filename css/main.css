@@ -1,0 +1,32 @@
+@charset "UTF-8";
+*, *:before, *:after {
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+/*div, a, header, footer, nav, section, aside, img, canvas, ul, ol, li {
+    outline: .5px solid rgba(255,0,0,.5);
+}*/
+html {
+    font-size: 100%;
+    overflow: hidden;
+}
+body {
+    font-family: Arial,"Heiti TC","微軟正黑體","Microsoft JhengHei","新細明體","PMingLiU",sans-serif;
+    overflow: hidden;
+}
+a {
+    color: #fff;
+    text-decoration: none;
+}
+.img img {
+    display: block;
+    width: 100%;
+}
+.tac {
+    text-align: center;
+}
+.clear {
+    clear: both;
+}
